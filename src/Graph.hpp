@@ -12,14 +12,20 @@ using namespace std;
 
 // Node object for storing ids
 struct Node {
-  const int value;
-  bool visited = false;
-  Node* prev = NULL;
-  
+  // unique identifier for every node.
+  const int GUID;
+  //incremental value for generating GUID
+  static int GUID_val;
+  // available types: "actor", "segment", "episode"
+  const string type;
+  // list of connected nodes
   unordered_set<Node*> connectedNodes;
-  Node(int input) : value(input) {};
+  // default constructor function
+  Node(string type) : GUID(GUID_val++), type(type){};
 };
 
+// static val declaration
+int Node::GUID_val = 0;
 
 class Graph {
  protected:
