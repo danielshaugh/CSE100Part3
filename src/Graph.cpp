@@ -18,13 +18,17 @@
 
 #define TIMER true
 using namespace std;
+
+typedef pair<int, Node*> linkedNode;
+// index, episode, episode name, segment, dialogue, type, actor, character, detail, date, series, transmission date
+enum RECORD_VALS {INDEX, EPISODE, EPISODE_NAME, SEGMENT, DIALOGUE, TYPE, ACTOR, CHARACTER, DETAIL, DATE, SERIES, TRANSMISSION_DATE};
+
 /**
  * Graph class constructor
 */
 Graph::Graph(void)
     : nodes() {
       // insert root node
-      this->insertNode(0, 0);
     }
 
 /**
@@ -59,9 +63,8 @@ bool insertNode(string type, auto value) {
  * 
  * Note: not used in current iteration of code because I lack foresight
 */
-Node* Graph::insertNode(Node* input) {
-  Node* insertion = new Node(idNumber);
-  pair<unordered_map<int, Node*>::iterator, bool> output = this->nodes.insert(make_pair(idNumber,insertion));
+Node* Graph::insertNode(int type, auto value) {
+  auto output = this->nodes.insert(make_pair(value,Node(idNumber,insertion));
   return (get<0>(output)->second);
 }
 
@@ -77,8 +80,9 @@ bool Graph::loadFromFile(const char* in_filename) {
   ifstream infile(in_filename);
   Node* insertVal;
   unordered_map<int, Node*>::iterator prevNode; // pointer to store intial pair value when adding to second's list
-  pair<unordered_map<int, Node*>::iterator, bool> firstNode; // stores returned value from insert function
-  pair<unordered_map<int, Node*>::iterator, bool> secondNode; // stores returned value from insert function
+  pair<unordered_map<string, Node*>::iterator, bool> firstNode; // stores returned value from insert function
+  
+  // read input into record
   while (infile) {
     string s;
     if (!getline(infile, s)) break;
@@ -86,14 +90,14 @@ bool Graph::loadFromFile(const char* in_filename) {
     vector<string> record;
     while (ss) {
       string s;
-      if (!getline(ss, s, ' ')) break;
+      if (!getline(ss, s, ',')) break;
       record.push_back(s);
     }
-    if (record.size() != 2) {
+    if (record.size() != 11) {
       continue;
     }
-    int record0 = stoi(record[0]);
-    int record1 = stoi(record[1]);
+    //get current episode
+    Node* currentEpisode = this->getNode(record[EPISODE_NAME]);
     insertVal = new Node(record0);
     firstNode = this->nodes.insert({record0, insertVal});
     insertVal = new Node(record1);
@@ -110,7 +114,6 @@ bool Graph::loadFromFile(const char* in_filename) {
   infile.close();
   return true;
 }
-
 
 /**
  * Function: pathfinder

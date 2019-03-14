@@ -9,22 +9,16 @@
 #define DEBUG true
 using namespace std;
 
-typedef pair<int, Node*> linkedNode;
-
 // Node object for storing ids
 struct Node {
-  // unique identifier for every node.
-  const int GUID;
-  //incremental value for generating GUID
-  static int GUID_val;
-  // available types:  0 = "head", 1 = "actor", 2 - "segment", 3 - "episode"
+  // available types: 0 = "actor", 1 - "segment", 2 - "episode"
   const int type;
   // stored value of node
-  auto value;
+  string value;
   // list of connected nodes
-  unordered_set<linkedNode> connectedNodes;
+  unordered_map<string, Node*> connectedNodes;
   // default constructor function
-  Node(string type) : GUID(GUID_val++), type(type) {};
+  Node(int type, string value) :  type(type), value(value) {};
 };
 
 // static val declaration
@@ -34,13 +28,11 @@ class Graph {
  protected:
   // stores by type
   unordered_map<string, Node*> nodes;
-  Node* insertNode(Node * node);
  public:
   Graph(void);
   ~Graph(void);
 
-  bool insertNode(int type, auto value);
-
+  Node* insertNode(int type, string  value);
   bool insertRelation(int id1, int id2);
   bool insertRelation(Node* node1, Node* node2, );
 
