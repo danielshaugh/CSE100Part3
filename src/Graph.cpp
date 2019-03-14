@@ -1,6 +1,6 @@
 /**
  * Name: Daniel Shaughnessy
- * Project: PA3 
+ * Project: PA3, Part 3
  * */
 
 
@@ -9,7 +9,6 @@
 #include <functional>
 #include <fstream>
 #include <iostream>
-#include <limits>
 #include <unordered_map>
 #include <sstream>
 #include <string>
@@ -17,35 +16,50 @@
 #include <queue>
 #include <chrono>
 
-#define TIMER false
+#define TIMER true
 using namespace std;
-typedef pair<int, Node*> kCoreElem;
-
 /**
  * Graph class constructor
 */
 Graph::Graph(void)
-    : nodes() {}
+    : nodes() {
+      // insert root node
+      this->insertNode(0, 0);
+    }
 
 /**
  * Graph class destructor 
 */
 Graph::~Graph(void) {
-  for(unordered_map<int, Node*>::iterator itr = this->nodes.begin(); itr != this->nodes.end(); itr++) {
+  for(unordered_map<string, Node*>::iterator itr = this->nodes.begin(); itr != this->nodes.end(); itr++) {
     delete itr->second;
   }
 }
 
 /**
  * Function: insertNode
+ * Public facing node insertion function
  * Parameters:
- * int idNumber - value of new node
+ * string type - type of node to be inserted
+ * auto value - contains appropriate type checked value of insertion
  * Output:
- * Node* to inserted value
+ * true if successfully inserted, false if failed to insert.
+ */
+bool insertNode(string type, auto value) {
+  if( type.compare("actor") || type.compare("segment") || type.compare("episode")w )
+}
+
+
+/**
+ * Function: insertNode
+ * Parameters:
+ * Node* input - node to be inserted
+ * Output:
+ * pointer to insertedNode
  * 
  * Note: not used in current iteration of code because I lack foresight
 */
-Node* Graph::insertNode(int idNumber) {
+Node* Graph::insertNode(Node* input) {
   Node* insertion = new Node(idNumber);
   pair<unordered_map<int, Node*>::iterator, bool> output = this->nodes.insert(make_pair(idNumber,insertion));
   return (get<0>(output)->second);
@@ -301,6 +315,24 @@ void Graph::socialgathering(vector<string>& invitees, const int& k) {
       invitees.push_back(to_string(this->nodes.at(i)->value));
     }
   }
+}
+
+
+bool Graph::findSecondWrapper(const char* in_filename, const char* search_file, const char* out_filename) {
+  // Open in_file
+  // construct graph
+  // open outfile
+  // open search file
+  // for each line in search file, validate
+  // call findSecond for each line
+  // print output to outfile
+  // close streams
+}
+
+void Graph::findSecond(vector<string>& connections, string actor, int startEpisode, int endEpisode) {
+  // Find relevant episodes
+    // start at root
+    // search all connections with weight 3
 }
 
 

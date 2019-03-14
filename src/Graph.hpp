@@ -9,6 +9,7 @@
 #define DEBUG true
 using namespace std;
 
+typedef pair<int, Node*> linkedNode;
 
 // Node object for storing ids
 struct Node {
@@ -16,12 +17,14 @@ struct Node {
   const int GUID;
   //incremental value for generating GUID
   static int GUID_val;
-  // available types: "actor", "segment", "episode"
-  const string type;
+  // available types:  0 = "head", 1 = "actor", 2 - "segment", 3 - "episode"
+  const int type;
+  // stored value of node
+  auto value;
   // list of connected nodes
-  unordered_set<Node*> connectedNodes;
+  unordered_set<linkedNode> connectedNodes;
   // default constructor function
-  Node(string type) : GUID(GUID_val++), type(type){};
+  Node(string type) : GUID(GUID_val++), type(type) {};
 };
 
 // static val declaration
@@ -29,33 +32,24 @@ int Node::GUID_val = 0;
 
 class Graph {
  protected:
-  unordered_map<int, Node*> nodes;
-
+  // stores by type
+  unordered_map<string, Node*> nodes;
+  Node* insertNode(Node * node);
  public:
   Graph(void);
-
   ~Graph(void);
 
-  //MAYBE ADD SOME MORE METHODS HERE SO AS TO ANSWER QUESTIONS IN YOUR PA
-  string printRoute(Node * node);
-
-  Node* insertNode(Node * node);
-
-  Node* insertNode(int idNum);
+  bool insertNode(int type, auto value);
 
   bool insertRelation(int id1, int id2);
-
+  bool insertRelation(Node* node1, Node* node2, );
 
   /* YOU CAN MODIFY THIS IF YOU LIKE , in_filename : THE INPUT FILENAME */
 
   bool loadFromFile(const char* in_filename);
 
-  bool pathfinder(const char* in_filename, const char* in_pairfile, const char* output_file);
-  string findPath(Node* from, Node* to);
-
-  bool socialGatheringWrapper(const char* in_filename, int k, const char* out_filename);
-  void socialgathering(vector<string>& invitees, const int& k);
-
+  bool findSecondWrapper(const char* in_filename, const char* out_filename);
+  void findSecond(vector<string>& connections, string actor, int startEpisode = 0, int endEpisode = 0);
 };
 
 #endif  // GRAPH_HPP
