@@ -18,8 +18,6 @@
 
 #define TIMER true
 using namespace std;
-
-typedef pair<int, Node*> linkedNode;
 // index, episode, episode name, segment, dialogue, type, actor, character, detail, date, series, transmission date
 enum RECORD_VALS {INDEX, EPISODE, EPISODE_NAME, SEGMENT, DIALOGUE, TYPE, ACTOR, CHARACTER, DETAIL, DATE, SERIES, TRANSMISSION_DATE};
 
@@ -56,6 +54,15 @@ Node* Graph::insertNode(int type, string value) {
   return (get<0>(output)->second);
 }
 
+/**
+ * Function: insertRelation 
+ * Purpose: create a connection between two separate nodes
+ * Parameters:
+ * Node* node1 - pointer to first Node object
+ * Node* node2 - pointer to second Node object
+ * Outputs:
+ *  returns false if connection existed, else true
+ */
 bool insertRelation(Node* node1, Node* node2) {
   // create a connection between first and second node
   auto connect1 = node1->connectedNodes.insert(make_pair(node2, node2->type));
@@ -68,15 +75,19 @@ bool insertRelation(Node* node1, Node* node2) {
 
 /**
  * Function: getNode
- * Usage: return value to passed parameter and true if found, else pass map::end and false.
- * 
- * 
+ * Usage: sets input to targeted Node.
+ * Parameters: 
+ * Node* ref - a pointer to a Node that is set by function
+ * string key - key to search for
+ * Outputs:
+ * returns true if node found, else returns false
  */
 bool getNode(Node*& ref, const string& key) {
   auto temp = this->nodes.find(key);
   ref = temp->second;
-  return (ref == this->nodes.end());
+  return (ref == nullptr);
 }
+
 /**
  * Function: loadFromFile
  * Usage: construct a graph based on input values.
@@ -135,211 +146,15 @@ bool Graph::loadFromFile(const char* in_filename) {
 }
 
 /**
- * Function: pathfinder
- * Purpose: 
+ * Function: findSecondWrapper
+ * Purpose: wrapper function for findSecond (parses input) 
  * Parameters:
- * const char* in_filename - input file containing all relationships
- * in_pairfile - file containing list of pairs to find connections for
- * output_file - output file to write shortest paths to
-*/
-bool Graph::pathfinder(const char* in_filename, const char* in_pairfile, const char* output_file) {
-  
-  auto start = chrono::high_resolution_clock::now();
-  //file handling
-  ifstream input(in_pairfile);
-  ofstream output;
-  output.open(output_file);
-  // load graph
-  bool loadResult = this->loadFromFile(in_filename);
-  if(!loadResult)
-  {
-    return false;
-  }
-  // get search pairs
-  while (input) {
-    string s;
-    if (!getline(input, s)) break;
-
-    istringstream ss(s);
-    vector<string> record;
-    
-    while (ss) {
-      string s;
-      if (!getline(ss, s, ' ')) break;
-      record.push_back(s);
-    }
-
-    if (record.size() != 2) {
-      continue;
-    }
-
-    Node* var1 = this->insertNode(stoi(record[0]));
-    Node* var2 = this->insertNode(stoi(record[1]));
-
-    
-    output << this->findPath(var1, var2);     
-  }
-
-    auto stop = chrono::high_resolution_clock::now();
-
-    if(TIMER) {
-    auto duration = chrono::duration_cast<chrono::nanoseconds>(stop - start).count(); 
-    cout << "duration: " << duration;
-    }
-  output.close();
-  return true;
-} 
-
-/**
- * Function: findPath
- * Parameters
- * Node* from - initial Node to search from
- * Node* to - final Node searched for
- * 
- * Output:
- * space separated string list of all steps taken to find shortest path
- * alternately, blank line if no connection exists.
-*/
-string Graph::findPath(Node* from, Node* to) {
-
-  struct listVal {
-    int val1;
-    Node* curr;
-    Node* prev;
-    listVal(int in1 = -1, Node* curr = NULL, Node* prev = NULL): val1(in1), curr(curr), prev(prev){}
-  };
-
-  if(from->value == to->value) {
-    return to_string(from->value) + "\n";
-  }
-  //perform a breadth first search for the shortest path
-  for(pair<int, Node*>val : this->nodes) {
-    get<1>(val)->visited = false;
-  }
-  Node* currentNode = NULL;
-  Node* prevNode = NULL;
-  int currentLength;
-  queue<listVal> currentList;
-  listVal curr;
-  // push intial value and length 0 to stack
-  listVal input = listVal(0, from, prevNode);
-  currentList.push(input);
-  // while list is not empty
-  while(currentList.size() != 0) {
-    //get values from front of list
-    curr = currentList.front();
-    currentList.pop();
-    currentLength = curr.val1;
-    currentNode = curr.curr;
-    prevNode = curr.prev;
-    // set visited/previous    
-    currentNode->visited = true;
-    currentNode->prev = prevNode;
-    // if end, return
-    if(currentNode == to) {
-      return this->printRoute(to);
-    }
-    //else keep exploring
-    for(Node* temp : currentNode->connectedNodes) {
-      if(!temp->visited) {
-        temp->visited = true;
-        currentList.push(listVal(currentLength+1, temp, currentNode));
-      }
-    }
-    prevNode = currentNode;
-  }
-
-  // fail condition
-  return "\n";
-}
-
-/**
- * Function: printRoute
- * Purpose: prints out list of nodes for findPath
- * Parameters:
- * Node* node - node from list with accurate node->prev values enable 
- * Output:
- * string list of steps taken
+ * in_filename - name of graph construction file
+ * search_file - name of search parameter file
+ * out_filename - name of output file
+ * Returns:
+ * false if read error, else true
  */
-string Graph::printRoute(Node * node) {
-  Node* curr = node;
-  string retVal = "";
-  while(curr->prev != NULL) {
-    retVal = to_string(curr->value) + " " + retVal;
-    curr = curr->prev;
-  }
-  retVal = to_string(curr->value) + " " + retVal + '\n';
-  return retVal;
-}
-
-bool Graph::socialGatheringWrapper(const char* in_filename, int k, const char* out_filename) {
-  //file handling
-  ofstream output;
-  output.open(out_filename);
-  vector<string> invitees;
-  // load graph
-  bool loadResult = this->loadFromFile(in_filename);
-  if(!loadResult)
-  {
-    return false;
-  }
-  else {
-    this->socialgathering(invitees, k);
-    for(auto obj : invitees) {
-      output << obj << endl;
-    }
-  }
-  return 1;
-}
-
-
-/* Implement social gathering*/
-//TODO
-void Graph::socialgathering(vector<string>& invitees, const int& k) {
-  
-  // resize vector
-  vector<int> inviteVal (this->nodes.size());
-  // current degree count
-  // current node
-  Node* currNode;
-  // construct a priority queue using a vector of nodes
-  priority_queue<kCoreElem, vector<kCoreElem>, greater<kCoreElem>> decompQueue;
-  for(unsigned i = 0; i < inviteVal.size(); i++) {
-    inviteVal[i] = this->nodes.at(i)->connectedNodes.size();
-    decompQueue.push( make_pair( inviteVal[i], this->nodes.at(i) ) );
-  }
-
-  // while elements in queue
-  while(!decompQueue.empty()) {
-    // get next node
-    currNode = get<1>(decompQueue.top());
-    decompQueue.pop();
-    // if node already visited, move to next value
-    if(currNode->visited) {
-      continue;
-    }
-    // set as visited
-    currNode->visited = true;
-    // for each neighboring node
-    for(auto& neighbor : currNode->connectedNodes) {
-      // if neighbor node has a higher degree than current node
-      if( inviteVal[neighbor->value] > inviteVal[currNode->value] ) {
-        // reduce neighbor degree by 1
-        inviteVal[neighbor->value] -= 1;
-        // replace neighbor value in priority queue
-        decompQueue.push(make_pair(inviteVal[neighbor->value],neighbor));
-      }
-    } 
-  }
-
-  for( unsigned i = 0; i < inviteVal.size(); i++) {
-    if(inviteVal[i] >= k) {
-      invitees.push_back(to_string(this->nodes.at(i)->value));
-    }
-  }
-}
-
-
 bool Graph::findSecondWrapper(const char* in_filename, const char* search_file, const char* out_filename) {
   
   // call findSecond for each line
@@ -371,7 +186,7 @@ bool Graph::findSecondWrapper(const char* in_filename, const char* search_file, 
     string actor = record[1];
     int start = stoi(record[2]);
     int end = stoi(record[3]);
-    output << this->findSecond(connections, actor, start, end);
+    output << this->findSecond(actor, start, end);
   }
     auto stop = chrono::high_resolution_clock::now();
     if(TIMER) {
@@ -382,7 +197,17 @@ bool Graph::findSecondWrapper(const char* in_filename, const char* search_file, 
   return true;
 }
 
-string Graph::findSecond(string connections, string actor, int startEpisode, int endEpisode) {
+/**
+ * Function: findSecond
+ * Purpose: given an actor and a range of episodes, find the actor who shared the most segments with him
+ * Parameters:
+ * actor - name of actor to search for
+ * startEpisode - first episode
+ * endEpisode - last episode
+ * Returns:
+ * outputs a string containing relative values, or a failure message if invalid parameters
+ */
+string Graph::findSecond(string actor, int startEpisode, int endEpisode) {
 
   string failureMessage = "invalid parameters: ";
   string output;
@@ -423,10 +248,6 @@ string Graph::findSecond(string connections, string actor, int startEpisode, int
   for(auto& obj : sharedCount) {
     output += obj.first->value + " : " + obj.second + "\n";
   }
-
   return output;
-
-
-
 }
 

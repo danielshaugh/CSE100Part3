@@ -18,13 +18,7 @@ struct Node {
   // list of connected nodes <node*, type of node>
   unordered_map<Node*, int> connectedNodes;
   // default constructor function
-  Node(int type, string value) :  type(type), value(value) {}; 
-  
-  bool getNode(Node*& ref, const string& key) {
-    auto temp = this->nodes.find(key);
-    ref = temp->second;
-    return (ref == this->nodes.end());
-  }
+  Node(int type, string value) :  type(type), value(value) {};
 };
 
 // static val declaration
@@ -41,13 +35,9 @@ class Graph {
   Node* insertNode(int type, string value);
   bool insertRelation(Node* node1, Node* node2);
   bool getNode(Node*& ref, const string& key);
-
-  /* YOU CAN MODIFY THIS IF YOU LIKE , in_filename : THE INPUT FILENAME */
-
   bool loadFromFile(const char* in_filename);
-
-  bool findSecondWrapper(const char* in_filename, const char* out_filename);
-  void findSecond(vector<string>& connections, string actor, int startEpisode = 0, int endEpisode = 0);
+  bool findSecondWrapper(const char* in_filename, const char* search_file, const char* out_filename);
+  void findSecond(string actor, int startEpisode = 0, int endEpisode = 0);
 };
 
 #endif  // GRAPH_HPP
