@@ -102,9 +102,9 @@ bool Graph::getNode(Node*& ref, const string& key) {
 */
 bool Graph::loadFromFile(const char* in_filename) {
   ifstream infile(in_filename);
-  Node* currentEpisode;
-  Node* currentSegment;
-  Node* currentActor;
+  Node* currentEpisode = nullptr;
+  Node* currentSegment = nullptr;
+  Node* currentActor = nullptr;
   unordered_map<int, Node*>::iterator prevNode; // pointer to store intial pair value when adding to second's list
   pair<unordered_map<string, Node*>::iterator, bool> firstNode; // stores returned value from insert function
   bool result;
