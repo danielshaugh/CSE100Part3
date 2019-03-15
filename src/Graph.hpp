@@ -33,7 +33,7 @@ class Graph {
   bool getNode(Node*& ref, const string& key);
   bool loadFromFile(const char* in_filename);
   bool findSecondWrapper(const char* in_filename, const char* search_file, const char* out_filename);
-  void findSecond(string actor, int startEpisode = 0, int endEpisode = 0);
+  string findSecond(string actor, int startEpisode = 0, int endEpisode = 0);
 };
 
 #endif  // GRAPH_HPP
