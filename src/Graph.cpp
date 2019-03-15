@@ -187,9 +187,9 @@ bool Graph::findSecondWrapper(const char* in_filename, const char* search_file, 
       continue;
     }
 
-    string actor = record[1];
-    int start = stoi(record[2]);
-    int end = stoi(record[3]);
+    string actor = record[0];
+    int start = stoi(record[1]);
+    int end = stoi(record[2]);
     output << this->findSecond(actor, start, end);
   }
     auto stop = chrono::high_resolution_clock::now();
