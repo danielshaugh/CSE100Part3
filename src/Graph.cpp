@@ -64,7 +64,7 @@ Node* Graph::insertNode(int type, string value) {
  * Outputs:
  *  returns false if connection existed, else true
  */
-bool insertRelation(Node* node1, Node* node2) {
+bool Graph::insertRelation(Node* node1, Node* node2) {
   // create a connection between first and second node
   auto connect1 = node1->connectedNodes.insert(make_pair(node2, node2->type));
   // create a connection between second and first node
@@ -83,7 +83,7 @@ bool insertRelation(Node* node1, Node* node2) {
  * Outputs:
  * returns true if node found, else returns false
  */
-bool getNode(Node*& ref, const string& key) {
+bool Graph::getNode(Node*& ref, const string& key) {
   auto temp = this->nodes.find(key);
   ref = temp->second;
   return (ref == nullptr);
