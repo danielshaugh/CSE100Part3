@@ -49,7 +49,7 @@ Graph::~Graph(void) {
 */
 Node* Graph::insertNode(int type, string value) {
   // attempt insertion
-  Node* temp = Node(type, value);
+  Node* temp = new Node(type, value);
   auto output = this->nodes.insert(make_pair(value,temp));
   // return output value
   return (get<0>(output)->second);
@@ -213,14 +213,13 @@ string Graph::findSecond(string actor, int startEpisode, int endEpisode) {
   string failureMessage = "invalid parameters: ";
   string output;
   Node* currActor;
-  Node* currSegment;
   Node* currEpisode;
 
   unordered_map<Node*, int> sharedCount;
 
 
   // CHECK: valid actor
-  if( !(this->getNode(currActor, to_string(actor)))) {
+  if( !(this->getNode(currActor, actor))) {
     return failureMessage + "could not find an actor named " + actor + " amongst listed individuals.\n";
   }
   //for each episode in range
