@@ -233,7 +233,7 @@ string Graph::findSecond(string actor, int startEpisode, int endEpisode) {
     // for each edge in current episode
     for(auto& segment : currEpisode->connectedNodes) {
       // if connected node is a segment and the actor is in that segment
-      if(segment.second == 1 && !(segment.first->connectedNodes.find(currActor) == nullptr)) {
+      if(segment.second == 1 && segment.first->connectedNodes.find(currActor) != segment.first->connectedNodes.find(currActor).end()) {
           // increase the contactCount of the relevant actor
           for(auto& actor : segment->first.connectedNodes) {
             if(actor.second == 0 && actor.first != currActor) {
