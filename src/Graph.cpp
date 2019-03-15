@@ -88,7 +88,7 @@ bool Graph::getNode(Node*& ref, const string& key) {
   if(temp == this->nodes.end()) {
     return false;
   }
-  ref = temp->second;
+  ref = temp;
   return true;
 }
 
