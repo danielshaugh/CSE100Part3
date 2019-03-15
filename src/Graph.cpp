@@ -214,10 +214,10 @@ bool Graph::findSecondWrapper(const char* in_filename, const char* search_file, 
 string Graph::findSecond(string actor, int startEpisode, int endEpisode) {
 
   string failureMessage = "invalid parameters: ";
-  string output = "\tActor: " + actor + ", Start: " + to_string(startEpisode) + ",End: " + to_string(endEpisode) + "\n";
+  string output = "\tActor: " + actor + ", Start: " + to_string(startEpisode) + ", End: " + to_string(endEpisode) + "\n";
   Node* currActor;
   Node* currEpisode;
-
+  
   unordered_map<Node*, int> sharedCount;
 
 
@@ -253,10 +253,17 @@ string Graph::findSecond(string actor, int startEpisode, int endEpisode) {
     }
   }
   
+  int highestVal = 0;
+  string highestActor;
   for(auto& obj : sharedCount) {
     output += obj.first->value + " : " + to_string(obj.second) + "\n";
+    if(obj.second > highestVal) {
+      highestVal = obj.second;
+      highestActor = obj.first->value;
+    }
+
   }
-  output += "\n\n";
+  output += "\n " + highestActor + " was the costar!\n\n";
   return output;
 }
 
