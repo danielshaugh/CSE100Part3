@@ -1,6 +1,15 @@
 CC := g++
 CXXFLAGS=-Wall -pedantic -std=c++11
 
+ifdef opt
+	CXXFLAGS += -O3
+	LDFLAGS += -O3
+else
+	CXXFLAGS += -g
+	LDFLAGS += -g
+endif
+
+
 # Folders
 SRCDIR := src
 BUILDDIR := build
