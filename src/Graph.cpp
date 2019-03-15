@@ -86,7 +86,7 @@ bool Graph::insertRelation(Node* node1, Node* node2) {
 bool Graph::getNode(Node*& ref, const string& key) {
   auto temp = this->nodes.find(key);
   ref = temp->second;
-  return (ref == nullptr);
+  return (ref == this->nodes.end());
 }
 
 /**
