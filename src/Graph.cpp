@@ -42,20 +42,6 @@ Graph::~Graph(void) {
 
 /**
  * Function: insertNode
- * Public facing node insertion function
- * Parameters:
- * string type - type of node to be inserted
- * auto value - contains appropriate type checked value of insertion
- * Output:
- * true if successfully inserted, false if failed to insert.
- */
-bool insertNode(string type, auto value) {
-  if( type.compare("actor") || type.compare("segment") || type.compare("episode")w )
-}
-
-
-/**
- * Function: insertNode
  * Parameters:
  * Node* input - node to be inserted
  * Output:
@@ -63,11 +49,34 @@ bool insertNode(string type, auto value) {
  * 
  * Note: not used in current iteration of code because I lack foresight
 */
-Node* Graph::insertNode(int type, auto value) {
-  auto output = this->nodes.insert(make_pair(value,Node(idNumber,insertion));
+Node* Graph::insertNode(int type, string value) {
+  // attempt insertion
+  auto output = this->nodes.insert(make_pair(value,Node(type,value));
+  // return output value
   return (get<0>(output)->second);
 }
 
+bool insertRelation(Node* node1, Node* node2) {
+  // create a connection between first and second node
+  auto connect1 = node1->connectedNodes.insert(make_pair(node2, node2->type));
+  // create a connection between second and first node
+  auto connect2 = node2->connectedNodes.insert(make_pair(node1, node1->type));
+
+  // return true if inserted, false if already existed
+  return connect1->second && connect2->second;
+}
+
+/**
+ * Function: getNode
+ * Usage: return value to passed parameter and true if found, else pass map::end and false.
+ * 
+ * 
+ */
+bool getNode(Node*& ref, const string& key) {
+  auto temp = this->nodes.find(key);
+  ref = temp->second;
+  return (ref == this->nodes.end());
+}
 /**
  * Function: loadFromFile
  * Usage: construct a graph based on input values.
@@ -78,10 +87,12 @@ Node* Graph::insertNode(int type, auto value) {
 */
 bool Graph::loadFromFile(const char* in_filename) {
   ifstream infile(in_filename);
-  Node* insertVal;
+  Node* currentEpisode;
+  Node* currentSegment;
+  Node* currentActor;
   unordered_map<int, Node*>::iterator prevNode; // pointer to store intial pair value when adding to second's list
   pair<unordered_map<string, Node*>::iterator, bool> firstNode; // stores returned value from insert function
-  
+  bool result;
   // read input into record
   while (infile) {
     string s;
@@ -96,14 +107,22 @@ bool Graph::loadFromFile(const char* in_filename) {
     if (record.size() != 11) {
       continue;
     }
-    //get current episode
-    Node* currentEpisode = this->getNode(record[EPISODE_NAME]);
-    insertVal = new Node(record0);
-    firstNode = this->nodes.insert({record0, insertVal});
-    insertVal = new Node(record1);
-    secondNode = this->nodes.insert({record1,insertVal});
-    this->nodes[record0]->connectedNodes.insert(get<0>(secondNode)->second);
-    this->nodes[record1]->connectedNodes.insert(get<0>(firstNode)->second);
+    // get or insert current episode
+    if(!(this->getNode(currentEpisode, record[EPISODE]))) {
+      Node* currentEpisode = this->insertNode(2, record[EPISODE]);
+    }
+    // get or insert current segment
+    if(!(this->getNode(currentSegment, record[SEGMENT]))) {
+      Node* currentSegment = this->insertNode(1, record[SEGMENT]);
+    }
+    // connect these if not already connected
+    result = insertRelation(currentEpisode, currentSegment);
+    // get or insert current actor
+    if(!(this->getNode(currentActor, record[ACTOR]))) {
+      Node* currentActor = this->insertNode(0, record[ACTOR]);
+    }
+    // connect these if not already connected
+    result = insertRelation(currentActor, currentSegment);
   }
 
   if (!infile.eof()) {
@@ -322,20 +341,92 @@ void Graph::socialgathering(vector<string>& invitees, const int& k) {
 
 
 bool Graph::findSecondWrapper(const char* in_filename, const char* search_file, const char* out_filename) {
-  // Open in_file
-  // construct graph
-  // open outfile
-  // open search file
-  // for each line in search file, validate
+  
   // call findSecond for each line
   // print output to outfile
   // close streams
+  auto start = chrono::high_resolution_clock::now();
+  //file handling
+  ifstream input(search_file);
+  ofstream output(out_filename);
+  
+  // load graph
+  if(!(this->loadFromFile(in_filename))) {return false;}
+  
+  // for each itme in search_file 
+  while (input) {
+    string s;
+    if (!getline(input, s)) break;
+    istringstream ss(s);
+    vector<string> record;
+    while (ss) {
+      string s;
+      if (!getline(ss, s, ' ')) break;
+      record.push_back(s);
+    }
+    if (record.size() != 4) {
+      continue;
+    }
+
+    string actor = record[1];
+    int start = stoi(record[2]);
+    int end = stoi(record[3]);
+    output << this->findSecond(connections, actor, start, end);
+  }
+    auto stop = chrono::high_resolution_clock::now();
+    if(TIMER) {
+    auto duration = chrono::duration_cast<chrono::nanoseconds>(stop - start).count(); 
+    cout << "duration: " << duration;
+    }
+  output.close();
+  return true;
 }
 
-void Graph::findSecond(vector<string>& connections, string actor, int startEpisode, int endEpisode) {
-  // Find relevant episodes
-    // start at root
-    // search all connections with weight 3
-}
+string Graph::findSecond(string connections, string actor, int startEpisode, int endEpisode) {
 
+  string failureMessage = "invalid parameters: ";
+  string output;
+  Node* currActor;
+  Node* currSegment;
+  Node* currEpisode;
+
+  unordered_map<Node*, int> sharedCount;
+
+
+  // CHECK: valid actor
+  if( !(this->getNode(currActor, to_string(actor)))) {
+    return failureMessage + "could not find an actor named " + actor + " amongst listed individuals.\n";
+  }
+  //for each episode in range
+  for(int i = startEpisode; i <= endEpisode; i++) {
+    // CHECK: valid episode enumeration (if does not exist or is not an episode)
+    if( !(this->getNode( currEpisode, to_string( i ))) || currEpisode->type != 2) {
+      return failureMessage + "could not find episode #" + i + " in data set\n";
+    }
+    // for each edge in current episode
+    for(auto& segment : currEpisode->connectedNodes) {
+      // if connected node is a segment and the actor is in that segment
+      if(segment.second == 1 && segment.first->connectedNodes.find(currActor) != nullptr) {
+          // increase the contactCount of the relevant actor
+          for(auto& actor : segment->first.connectedNodes) {
+            if(actor.second == 0 && actor.first != currActor) {
+              // if exists, increment else add to map
+              sharedCount.find(actor.first) == nullptr ?
+              sharedCount.insert(actor.first, 0) :
+              sharedCount.find(actor.first) += 1;
+          }
+        }
+      }
+    }
+  }
+  
+  for(auto& obj : sharedCount) {
+    output += obj.first->value + " : " + obj.second + "\n";
+  }
+
+  return output;
+
+
+
+}
 

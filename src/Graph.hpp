@@ -15,10 +15,16 @@ struct Node {
   const int type;
   // stored value of node
   string value;
-  // list of connected nodes
-  unordered_map<string, Node*> connectedNodes;
+  // list of connected nodes <node*, type of node>
+  unordered_map<Node*, int> connectedNodes;
   // default constructor function
-  Node(int type, string value) :  type(type), value(value) {};
+  Node(int type, string value) :  type(type), value(value) {}; 
+  
+  bool getNode(Node*& ref, const string& key) {
+    auto temp = this->nodes.find(key);
+    ref = temp->second;
+    return (ref == this->nodes.end());
+  }
 };
 
 // static val declaration
@@ -32,9 +38,9 @@ class Graph {
   Graph(void);
   ~Graph(void);
 
-  Node* insertNode(int type, string  value);
-  bool insertRelation(int id1, int id2);
-  bool insertRelation(Node* node1, Node* node2, );
+  Node* insertNode(int type, string value);
+  bool insertRelation(Node* node1, Node* node2);
+  bool getNode(Node*& ref, const string& key);
 
   /* YOU CAN MODIFY THIS IF YOU LIKE , in_filename : THE INPUT FILENAME */
 
