@@ -183,7 +183,7 @@ bool Graph::findSecondWrapper(const char* in_filename, const char* search_file, 
       if (!getline(ss, s, ',')) break;
       record.push_back(s);
     }
-    if (record.size() != 4) {
+    if (record.size() != 3) {
       continue;
     }
 
@@ -194,8 +194,8 @@ bool Graph::findSecondWrapper(const char* in_filename, const char* search_file, 
   }
     auto stop = chrono::high_resolution_clock::now();
     if(TIMER) {
-    auto duration = chrono::duration_cast<chrono::nanoseconds>(stop - start).count(); 
-    cout << "duration: " << duration;
+      auto duration = chrono::duration_cast<chrono::nanoseconds>(stop - start).count(); 
+      cout << "duration: " << duration;
     }
   output.close();
   return true;
