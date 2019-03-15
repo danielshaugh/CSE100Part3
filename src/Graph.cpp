@@ -220,13 +220,15 @@ string Graph::findSecond(string actor, int startEpisode, int endEpisode) {
 
   // CHECK: valid actor
   if( !(this->getNode(currActor, actor))) {
-    return failureMessage + "could not find an actor named " + actor + " amongst listed individuals.\n";
+    failureMessage = failureMessage + "could not find an actor named " + actor + " amongst listed individuals.\n";
+    return failureMessage;
   }
   //for each episode in range
   for(int i = startEpisode; i <= endEpisode; i++) {
     // CHECK: valid episode enumeration (if does not exist or is not an episode)
     if( !(this->getNode( currEpisode, to_string( i ))) || currEpisode->type != 2) {
-      return failureMessage + "could not find episode #" + i + " in data set\n";
+      failureMessage = failureMessage + "could not find episode #" + i + " in data set\n";
+      return failureMessage;
     }
     // for each edge in current episode
     for(auto& segment : currEpisode->connectedNodes) {
