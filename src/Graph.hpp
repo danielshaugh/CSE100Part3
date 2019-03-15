@@ -20,10 +20,6 @@ struct Node {
   // default constructor function
   Node(int type, string value) :  type(type), value(value) {};
 };
-
-// static val declaration
-int Node::GUID_val = 0;
-
 class Graph {
  protected:
   // stores by type
