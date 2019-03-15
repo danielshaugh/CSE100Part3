@@ -52,7 +52,7 @@ Node* Graph::insertNode(int type, string value) {
   Node* temp = new Node(type, value);
   auto output = this->nodes.insert(make_pair(value,temp));
   // return output value
-  temp = *(output.first->second);
+  *temp = (output.first->second);
   return temp;
 }
 
