@@ -177,7 +177,7 @@ bool Graph::findSecondWrapper(const char* in_filename, const char* search_file, 
     vector<string> record;
     while (ss) {
       string s;
-      if (!getline(ss, s, ' ')) break;
+      if (!getline(ss, s, ',')) break;
       record.push_back(s);
     }
     if (record.size() != 4) {
