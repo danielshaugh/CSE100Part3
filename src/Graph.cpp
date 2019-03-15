@@ -49,7 +49,7 @@ Graph::~Graph(void) {
 */
 Node* Graph::insertNode(int type, string value) {
   // attempt insertion
-  auto output = this->nodes.insert(make_pair(value,Node(type,value));
+  auto output = this->nodes.insert(make_pair(value,Node(type,value)));
   // return output value
   return (get<0>(output)->second);
 }
@@ -70,7 +70,7 @@ bool insertRelation(Node* node1, Node* node2) {
   auto connect2 = node2->connectedNodes.insert(make_pair(node1, node1->type));
 
   // return true if inserted, false if already existed
-  return connect1->second && connect2->second;
+  return connect1.second && connect2.second;
 }
 
 /**
