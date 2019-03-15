@@ -239,7 +239,7 @@ string Graph::findSecond(string actor, int startEpisode, int endEpisode) {
             if(itActor.second == 0 && itActor.first != currActor) {
               // if exists, increment else add to map
               sharedCount.find(itActor.first) == sharedCount.end() ?
-              sharedCount.insert(itActor.first, 0) :
+              sharedCount.insert(make_pair(itActor.first, 0) :
               sharedCount.find(itActor.first) += 1;
           }
         }
