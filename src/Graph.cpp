@@ -124,17 +124,17 @@ bool Graph::loadFromFile(const char* in_filename) {
     }
     // get or insert current episode
     if(!(this->getNode(currentEpisode, record[EPISODE]))) {
-      Node* currentEpisode = this->insertNode(2, record[EPISODE]);
+      currentEpisode = this->insertNode(2, record[EPISODE]);
     }
     // get or insert current segment
     if(!(this->getNode(currentSegment, record[SEGMENT]))) {
-      Node* currentSegment = this->insertNode(1, record[SEGMENT]);
+      currentSegment = this->insertNode(1, record[SEGMENT]);
     }
     // connect these if not already connected
     result = insertRelation(currentEpisode, currentSegment);
     // get or insert current actor
     if(!(this->getNode(currentActor, record[ACTOR]))) {
-      Node* currentActor = this->insertNode(0, record[ACTOR]);
+      currentActor = this->insertNode(0, record[ACTOR]);
     }
     // connect these if not already connected
     result = insertRelation(currentActor, currentSegment);
