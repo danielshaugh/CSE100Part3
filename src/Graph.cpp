@@ -214,7 +214,7 @@ bool Graph::findSecondWrapper(const char* in_filename, const char* search_file, 
 string Graph::findSecond(string actor, int startEpisode, int endEpisode) {
 
   string failureMessage = "invalid parameters: ";
-  string output = "INPUT: " + actor + "\t" + to_string(startEpisode) + "\t" + to_string(endEpisode) + "\n\n";
+  string output = "\t" + actor + "\t" + to_string(startEpisode) + "\t" + to_string(endEpisode) + "\n";
   Node* currActor;
   Node* currEpisode;
 
@@ -254,7 +254,7 @@ string Graph::findSecond(string actor, int startEpisode, int endEpisode) {
   }
   
   for(auto& obj : sharedCount) {
-    output += obj.first->value + " : " + to_string(obj.second) + "\n";
+    output += obj.first->value + " : " + to_string(obj.second) + "\n\n";
   }
   return output;
 }
