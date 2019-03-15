@@ -19,7 +19,7 @@
 #define TIMER true
 using namespace std;
 // index, episode, episode name, segment, dialogue, type, actor, character, detail, date, series, transmission date
-enum RECORD_VALS {INDEX, EPISODE, EPISODE_NAME, SEGMENT, DIALOGUE, TYPE, ACTOR, CHARACTER, DETAIL, DATE, SERIES, TRANSMISSION_DATE};
+enum RECORD_VALS {INDEX, EPISODE, EPISODE_NAME, SEGMENT, DIALOGUE, ACTOR, CHARACTER, DETAIL, DATE, SERIES, TRANSMISSION_DATE};
 
 /**
  * Graph class constructor
