@@ -238,9 +238,12 @@ string Graph::findSecond(string actor, int startEpisode, int endEpisode) {
           for(auto itActor : segment.first->connectedNodes) {
             if(itActor.second == 0 && itActor.first != currActor) {
               // if exists, increment else add to map
-              sharedCount.find(itActor.first) == sharedCount.end() ?
-              sharedCount.insert(make_pair(itActor.first, 0)) :
-              sharedCount.find(itActor.first)->second += 1;
+              if(sharedCount.find(itActor.first) == sharedCount.end()) {
+                sharedCount.insert(make_pair(itActor.first, 0)) :
+              }
+              else {
+                sharedCount.find(itActor.first)->second += 1;
+              }
           }
         }
       }
