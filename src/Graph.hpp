@@ -30,7 +30,7 @@ class Graph {
 
   Node* insertNode(int type, string value);
   bool insertRelation(Node* node1, Node* node2);
-  bool getNode(Node* ref, const string& key);
+  bool getNode(Node*& ref, const string& key);
   bool loadFromFile(const char* in_filename);
   bool findSecondWrapper(const char* in_filename, const char* search_file, const char* out_filename);
   string findSecond(string actor, int startEpisode = 0, int endEpisode = 0);
